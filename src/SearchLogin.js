@@ -9,16 +9,25 @@ const URL = "https://api.intra.42.fr/v2/users/";
 export default function Research({navigation}) {
   const [login, setLogin] = useState('');
   const [token, setToken] = useState('');
+  const [expiration, setExpiration] = useState(0);
+  const date = new Date();
+  const time = date.getTime() / 1000;
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const headers = {'Authorization': `Bearer ${token}`};
 
   useEffect(() => {
+    if (expiration < time) {
       axios.post("https://api.intra.42.fr/oauth/token", { grant_type: 'client_credentials', client_id: UID, client_secret: SECRET})
       .then(res => {
         setToken(res.data.access_token);
+        setExpiration(res.data.created_at + res.data.expires_in);
       })
-    }, []);
+      .catch(() => {
+        alert("Please check your internet connection or your token");
+      })
+    }
+    }, [time]);
 
   const handleLogin = (method, url) => {
     setIsLoading(true);
@@ -28,7 +37,7 @@ export default function Research({navigation}) {
           navigation.navigate("Details", { userData: res.data, cursusId: true});
         })
         .catch(err => {
-          setError("Enter a valid login plz");
+          setError("Enter a valid login please");
         })
         .then(() => setIsLoading(false));
       }
@@ -39,10 +48,10 @@ export default function Research({navigation}) {
     <TextInput style={styles.input}
       onEndEditing={() => setError('')}
       autoCapitalize="none"
-      placeholder='Rechercher un login'
+      placeholder='Search for login'
       onChangeText={value => setLogin(value)}/>
     <Text style={{color: 'red', margin: 5}}>{error}</Text>
-    <Button onPress={() => handleLogin('get', URL + login)} title='rechercher'></Button>
+    <Button onPress={() => handleLogin('get', URL + login)} title='Search'></Button>
     {isLoading &&
     <View style={styles.loading}>
       <ActivityIndicator size='large' color="#26c98c"/>
