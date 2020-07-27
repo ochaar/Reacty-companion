@@ -2,6 +2,9 @@
 #### The aim of the projet is to build an application that will retrieve the information of 42 student, using the 42 API.
 
 In this project I used: 42 API, Axios, React native CLI
+![Home Page](screenshot4.png)
+![My Profile](screenshot1.png)
+![Project mark](screenshot3.png)
 
 ## Install the app
 
